@@ -7,7 +7,10 @@
   <title>Ragesh C.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Playfair+Display:ital,wght@1,400;1,700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,10 +56,8 @@
       height: 50%;
       background: var(--bg);
     }
-    .preloader-top    { top: 0;    animation: panelUp   0.95s cubic-bezier(0.76, 0, 0.24, 1) 0.3s both; }
-    .preloader-bottom { bottom: 0; animation: panelDown 0.95s cubic-bezier(0.76, 0, 0.24, 1) 0.3s both; }
-    @keyframes panelUp   { from { transform: translateY(0); } to { transform: translateY(-100%); } }
-    @keyframes panelDown { from { transform: translateY(0); } to { transform: translateY(100%);  } }
+    .preloader-top    { top: 0; }
+    .preloader-bottom { bottom: 0; }
 
     /* ── NAV ── */
 
@@ -79,7 +80,6 @@
       color: var(--fg);
       text-decoration: none;
       opacity: 0;
-      animation: revealEl 0.6s var(--ease-out) 1.5s forwards;
       transition: opacity var(--t-fast);
       text-shadow: 0 1px 12px rgba(0,0,0,0.6);
     }
@@ -90,7 +90,6 @@
       display: flex;
       gap: 2.25rem;
       opacity: 0;
-      animation: revealEl 0.6s var(--ease-out) 1.65s forwards;
     }
     .nav-links a {
       font-family: var(--font-mono);
@@ -104,8 +103,6 @@
       text-shadow: 0 1px 8px rgba(0,0,0,0.6);
     }
     .nav-links a:hover { opacity: 1; }
-
-    @keyframes revealEl { to { opacity: 0.8; } }
 
     /* ── HERO ── */
 
@@ -227,12 +224,7 @@
       display: inline-block;
       opacity: 0;
       transform: translateY(20px);
-      animation:
-        letterIn  0.9s cubic-bezier(0.16,1,0.3,1) calc(var(--i) * 0.07s + 0.7s) forwards,
-        letterOut 0.7s cubic-bezier(0.16,1,0.3,1) calc(var(--i) * 0.07s + 0.7s + 3.1s) forwards;
     }
-    @keyframes letterIn  { to { opacity: 1; transform: translateY(0); } }
-    @keyframes letterOut { to { opacity: 0; transform: translateY(-14px); } }
 
     .hero-role {
       font-family: var(--font-mono);
@@ -243,9 +235,7 @@
       text-shadow: 0 1px 12px rgba(0,0,0,0.7);
       opacity: 0;
       transform: translateY(10px);
-      animation: fadeUp 0.8s var(--ease-out) 1.65s forwards;
     }
-    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
     /* ── SCROLL CUE ── */
 
@@ -258,14 +248,7 @@
       height: 44px;
       background: var(--fg-muted);
       opacity: 0;
-      animation:
-        cueReveal   0.6s var(--ease-out) 2.6s forwards,
-        scrollPulse 2.4s ease-in-out 3.2s infinite;
-    }
-    @keyframes cueReveal   { to { opacity: 0.28; } }
-    @keyframes scrollPulse {
-      0%, 100% { transform: translateX(-50%) scaleY(1);    opacity: 0.28; }
-      50%       { transform: translateX(-50%) scaleY(0.35); opacity: 0.08; }
+      transform: translateX(-50%);
     }
 
     /* ── CURSOR ── */
@@ -291,12 +274,175 @@
       margin: -22px 0 0 -22px;
     }
 
+    /* ── CATEGORIES LAYOUT ── */
+
+    .services-intro {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10rem 2rem;
+      position: relative;
+    }
+
+    .huge-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: clamp(4rem, 14vw, 15rem);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 3rem;
+      z-index: 2;
+      position: relative;
+    }
+
+    .intro-desc {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--fg-muted);
+      max-width: 600px;
+    }
+    .crosses { font-family: var(--font-mono); margin-bottom: 1.5rem; letter-spacing: 0.2em; color: var(--fg); }
+    .intro-desc strong { color: var(--fg); font-weight: 400; }
+
+    .category-header {
+      width: 100%;
+      min-height: 100vh;
+      padding: 15rem 8rem 5rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .category-desc {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--fg-muted);
+      max-width: 400px;
+    }
+    .cat-line { width: 4px; background: var(--fg); flex-shrink: 0; }
+    .category-desc strong { color: var(--fg); font-weight: 400; }
+
+    .category-tags {
+      margin-top: 6rem;
+      display: flex;
+      gap: 3rem;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--fg-muted);
+      text-transform: uppercase;
+    }
+    .category-tags span { display: block; margin-bottom: 0.5rem; color: var(--fg); }
+
+    .floating-obj {
+      position: absolute;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.8;
+      border-radius: 50%; /* soft edge blending */
+      mask-image: radial-gradient(circle, black 50%, transparent 80%);
+      -webkit-mask-image: radial-gradient(circle, black 50%, transparent 80%);
+    }
+    .obj-anim-1 { top: 10%; right: 5%; width: 50vw; filter: blur(1px); }
+    .obj-prod-1 { top: 20%; right: -5%; width: 55vw; }
+    .obj-photo-1 { top: 15%; right: 0%; width: 50vw; }
+
+    .category-works {
+      padding: 2rem 0 10rem;
+    }
+    
+    .collage-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 2rem;
+      padding: 0 4rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .work-card {
+      background: #EAEAEA;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      position: relative;
+      z-index: 2;
+      transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+    }
+    .work-card:hover {
+      box-shadow: 0 30px 70px rgba(0,0,0,1);
+      transform: translateY(-10px);
+    }
+    .work-card-img-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      background: #ccc;
+    }
+    .work-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .work-card:hover img {
+      transform: scale(1.06);
+    }
+    .work-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.2rem, 2vw, 1.75rem);
+      color: #111;
+      margin-bottom: 3rem;
+      letter-spacing: -0.03em;
+      padding: 0 0.5rem;
+    }
+    .work-tags {
+      margin-top: auto;
+      display: flex;
+      gap: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #666;
+      padding: 0 0.5rem 0.5rem;
+    }
+
+    /* Reveal Animations */
+    .gsap-split-up { clip-path: polygon(0 0, 100% 0, 100% 120%, 0% 120%); }
+    .gsap-split-up .word { display: inline-block; transform: translateY(110%); opacity: 0; }
+    .gsap-fade-up { opacity: 0; transform: translateY(40px); }
+    .gsap-reveal { opacity: 0; transform: translateY(80px); }
+
     /* ── RESPONSIVE ── */
+
+    @media (max-width: 900px) {
+      .collage-grid { display: flex; flex-direction: column; gap: 4rem; padding: 0 2rem; }
+      .work-card { margin-top: 0 !important; }
+      .category-header { padding: 10rem 2rem 5rem; }
+      .floating-obj { opacity: 0.3; right: -20%; }
+    }
 
     @media (max-width: 600px) {
       .nav { padding: 1.25rem 1.5rem; }
       .nav-links { gap: 1.25rem; }
       .nav-links a { font-size: 9px; }
+      .works-header { padding: 0 2rem; }
     }
 
     /* ── TOUCH — hide cursor, restore body cursor ── */
@@ -309,13 +455,13 @@
     /* ── REDUCED MOTION ── */
 
     @media (prefers-reduced-motion: reduce) {
-      .preloader-top    { animation: none; transform: translateY(-100%); }
-      .preloader-bottom { animation: none; transform: translateY(100%);  }
-      .hero-video-bg    { animation: none; opacity: 1; }
-      .letter           { animation: none; opacity: 1; transform: none; }
-      .hero-role        { animation: none; opacity: 1; transform: none; }
-      .hero-scroll-cue  { animation: none; opacity: 0.28; }
-      .nav-mark, .nav-links { animation: none; opacity: 0.8; }
+      .preloader-top    { transform: translateY(-100%); }
+      .preloader-bottom { transform: translateY(100%);  }
+      .hero-video-bg    { opacity: 1; }
+      .letter           { opacity: 1; transform: none; }
+      .hero-role        { opacity: 1; transform: none; }
+      .hero-scroll-cue  { opacity: 0.28; }
+      .nav-mark, .nav-links { opacity: 0.8; }
       .modal, .modal-inner  { transition: none; }
       .cursor { display: none; }
       body { cursor: auto; }
@@ -381,12 +527,205 @@
     <div class="hero-scroll-cue" aria-hidden="true"></div>
   </section>
 
+  <section id="works">
+    <!-- INTRO -->
+    <section class="services-intro">
+      <h2 class="huge-text gsap-split-up">
+        <span class="word">THIS</span> <span class="word">IS</span><br>
+        <span class="word">WHAT</span> <span class="word">I</span> <span class="word">DO</span>
+      </h2>
+      <div class="intro-desc gsap-fade-up">
+        <div class="crosses">+ + +</div>
+        <p>We're not here to chase trends or talk in circles.<br>We care about the work - how it looks, how it feels, how it holds up.<br><strong>That's it. That's the pitch.</strong></p>
+      </div>
+    </section>
+
+    <!-- ANIMATION -->
+    <section class="category-header">
+      <h2 class="huge-text gsap-split-up"><span class="word">ANIMATION</span></h2>
+      <div class="category-desc gsap-fade-up">
+        <div class="cat-line"></div>
+        <p>We bring ideas to life with motion.<br>Every keyframe is a choice.<br><strong>We make sure it's the right one.</strong></p>
+      </div>
+      <div class="category-tags gsap-fade-up">
+        <div><span>I</span><br>2D / 3D</div>
+        <div><span>I</span><br>MOTION GRAPHICS</div>
+        <div><span>I</span><br>VFX</div>
+      </div>
+      <img src="float_anim.png" class="floating-obj obj-anim-1" aria-hidden="true" data-speed="1.4">
+    </section>
+
+    <section class="category-works">
+      <div class="collage-grid">
+        <div class="work-card gsap-reveal" style="grid-column: 2 / span 5;">
+          <div class="work-card-img-wrap"><img src="work_anim_1.png" alt="Cyber Kinetic"></div>
+          <h3 class="work-title">CYBER KINETIC</h3>
+          <div class="work-tags"><span>I</span><span>ANIMATION</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTION -->
+    <section class="category-header">
+      <h2 class="huge-text gsap-split-up"><span class="word">PRODUCTION</span></h2>
+      <div class="category-desc gsap-fade-up">
+        <div class="cat-line"></div>
+        <p>We care about the details - because in the end,<br>that is what matters the most.<br><strong>We make sure it's the right one.</strong></p>
+      </div>
+      <div class="category-tags gsap-fade-up">
+        <div><span>I</span><br>WEB/TV SPOTS</div>
+        <div><span>I</span><br>BRAND VIDEOS</div>
+        <div><span>I</span><br>PRODUCT VIDEOS</div>
+      </div>
+      <img src="float_prod.png" class="floating-obj obj-prod-1" aria-hidden="true" data-speed="1.25">
+    </section>
+
+    <section class="category-works">
+      <div class="collage-grid">
+        <div class="work-card gsap-reveal" style="grid-column: 7 / span 5; margin-top: -5rem;">
+          <div class="work-card-img-wrap"><img src="work_prod_1.png" alt="Zara Man"></div>
+          <h3 class="work-title">ZARA MAN</h3>
+          <div class="work-tags"><span>I</span><span>PRODUCTION</span></div>
+        </div>
+        <div class="work-card gsap-reveal" style="grid-column: 2 / span 4; margin-top: 5rem;">
+          <div class="work-card-img-wrap"><img src="work_prod_2.png" alt="TQ HPR40"></div>
+          <h3 class="work-title">TQ HPR40</h3>
+          <div class="work-tags"><span>I</span><span>FILM</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHOTO -->
+    <section class="category-header">
+      <h2 class="huge-text gsap-split-up"><span class="word">PHOTO</span></h2>
+      <div class="category-desc gsap-fade-up">
+        <div class="cat-line"></div>
+        <p>There's a story in every moment.<br>Nothing added. Nothing lost.<br><strong>We let it be remembered.</strong></p>
+      </div>
+      <div class="category-tags gsap-fade-up">
+        <div><span>I</span><br>EDITORIAL</div>
+        <div><span>I</span><br>ACTION</div>
+        <div><span>I</span><br>LIFESTYLE</div>
+      </div>
+      <img src="float_photo.png" class="floating-obj obj-photo-1" aria-hidden="true" data-speed="1.15">
+    </section>
+
+    <section class="category-works">
+      <div class="collage-grid">
+        <div class="work-card gsap-reveal" style="grid-column: 4 / span 6; margin-top: -3rem;">
+          <div class="work-card-img-wrap"><img src="work_photo_1.png" alt="Vitalpin"></div>
+          <h3 class="work-title">VITALPIN</h3>
+          <div class="work-tags"><span>I</span><span>PHOTOGRAPHY</span></div>
+        </div>
+      </div>
+    </section>
+  </section>
+
   <script>
-    /* ── PRELOADER: remove after panels clear ── */
-    setTimeout(() => {
-      const p = document.getElementById('preloader');
-      if (p) p.remove();
-    }, 1400);
+    /* ── LENIS FOR SMOOTH SCROLLING ── */
+    const lenis = new Lenis({
+      autoRaf: true,
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+    });
+
+    /* ── GSAP TIMELINES ── */
+    gsap.registerPlugin(ScrollTrigger);
+    
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (!isReducedMotion) {
+      const masterTl = gsap.timeline();
+
+      // 1. Preloader panels
+      masterTl.to('.preloader-top', { yPercent: -100, duration: 0.95, ease: "power4.inOut" }, 0.3)
+              .to('.preloader-bottom', { yPercent: 100, duration: 0.95, ease: "power4.inOut" }, 0.3)
+              .call(() => {
+                const p = document.getElementById('preloader');
+                if (p) p.remove();
+              }, null, "+=0.1");
+
+      // 2. Nav and Role
+      masterTl.to('.nav-mark', { opacity: 0.8, duration: 0.6, ease: "power3.out" }, 1.5)
+              .to('.nav-links', { opacity: 0.8, duration: 0.6, ease: "power3.out" }, 1.65)
+              .to('.hero-role', { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, 1.65);
+
+      // 3. Scroll Cue
+      masterTl.to('.hero-scroll-cue', { opacity: 0.28, duration: 0.6, ease: "power3.out" }, 2.6)
+              .to('.hero-scroll-cue', { 
+                scaleY: 0.35, opacity: 0.08, duration: 1.2, 
+                ease: "sine.inOut", yoyo: true, repeat: -1 
+              }, 3.2);
+
+      // 4. Letters (Looping)
+      const letters = document.querySelectorAll('.letter');
+      const textTl = gsap.timeline({ repeat: -1 });
+      
+      textTl.to(letters, { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", stagger: 0.07 }, 0.7)
+            .to(letters, { y: -14, opacity: 0, duration: 0.7, ease: "power3.inOut", stagger: 0.07 }, "+=3.1")
+            .to({}, {duration: 0.2}); // small wait before repeat
+
+      // 5. ScrollTrigger Reveals for Categories
+      document.querySelectorAll('.gsap-split-up').forEach(el => {
+        const words = el.querySelectorAll('.word');
+        gsap.to(words, {
+          y: 0, opacity: 1, duration: 1.2, ease: "power4.out", stagger: 0.1,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+
+      document.querySelectorAll('.gsap-fade-up').forEach(el => {
+        gsap.to(el, {
+          y: 0, opacity: 1, duration: 1.2, ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+
+      document.querySelectorAll('.gsap-reveal').forEach(el => {
+        gsap.to(el, {
+          y: 0, opacity: 1, duration: 1.2, ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+
+      // 6. Floating Parallax Objects
+      document.querySelectorAll('.floating-obj').forEach(el => {
+        const speed = parseFloat(el.getAttribute('data-speed')) || 1;
+        gsap.to(el, {
+          y: () => -200 * speed,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el.parentElement,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      });
+    } else {
+      setTimeout(() => {
+        const p = document.getElementById('preloader');
+        if (p) p.remove();
+      }, 1400);
+
+      // Fallback for reveals
+      document.querySelectorAll('.gsap-reveal').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    }
 
     /* ── YOUTUBE: inject src immediately so it buffers/plays invisibly for a full 5s
          before we reveal it — controls flash (1-3s) is long gone by reveal time ── */
@@ -494,42 +833,28 @@
       tick();
     })();
 
-    /* ── LETTER LOOP ── */
-    (function () {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      function restart() {
-        document.querySelectorAll('.letter').forEach(el => {
-          const c = el.cloneNode(true);
-          el.parentNode.replaceChild(c, el);
-        });
-      }
-      /* First restart after all letterOut animations complete:
-         latest = i5: 5×0.07 + 0.7 + 3.1 + 0.7 = 4.85s → safe at 5.1s */
-      setTimeout(function loop() { restart(); setTimeout(loop, 5000); }, 5100);
-    })();
-
-    /* ── SMOOTH LERP CURSOR ── */
+    /* ── SMOOTH LERP CURSOR USING GSAP ── */
     (function () {
       const el = document.querySelector('.cursor');
       if (window.matchMedia('(hover: none)').matches ||
           window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        el.style.display = 'none';
+        if(el) el.style.display = 'none';
         document.body.style.cursor = 'auto';
         return;
       }
 
-      const LERP = 0.12;
-      let mx = -100, my = -100, cx = -100, cy = -100;
+      // GSAP quickTo for highly performant tracking
+      const xTo = gsap.quickTo(el, "x", { duration: 0.6, ease: "power3.out" });
+      const yTo = gsap.quickTo(el, "y", { duration: 0.6, ease: "power3.out" });
 
-      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+      // Move element to top left to rely entirely on transforms
+      el.style.top = 0;
+      el.style.left = 0;
 
-      (function loop() {
-        cx += (mx - cx) * LERP;
-        cy += (my - cy) * LERP;
-        el.style.left = cx + 'px';
-        el.style.top  = cy + 'px';
-        requestAnimationFrame(loop);
-      })();
+      document.addEventListener('mousemove', e => { 
+        xTo(e.clientX - 5); // offset by half of default 10px width
+        yTo(e.clientY - 5); 
+      });
 
       document.querySelectorAll('a, button').forEach(t => {
         t.addEventListener('mouseenter', () => el.classList.add('expanded'));

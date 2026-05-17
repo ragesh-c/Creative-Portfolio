@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ragesh C. — Creative designer and producer based in Bangalore." />
+  <title>Ragesh C.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0C0C0C;
+      --surface:    #141414;
+      --surface-2:  #1E1E1E;
+      --fg:         #F5F0EB;
+      --fg-muted:   #B8B0A4;
+      --accent:     #C8A97E;
+      --border:     rgba(255,255,255,0.07);
+      --border-mid: rgba(255,255,255,0.12);
+      --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+      --t-fast:     180ms;
+      --t-mid:      400ms;
+      --t-slow:     700ms;
+      --font-display: 'Playfair Display', serif;
+      --font-mono:    'JetBrains Mono', monospace;
+      --font-body:    'Source Serif 4', serif;
+    }
+
+    html { background: var(--bg); color: var(--fg); }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── PRELOADER ── */
+
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 8000;
+      pointer-events: none;
+    }
+    .preloader-panel {
+      position: absolute;
+      left: 0; right: 0;
+      height: 50%;
+      background: var(--bg);
+    }
+    .preloader-top    { top: 0;    animation: panelUp   0.95s cubic-bezier(0.76, 0, 0.24, 1) 0.3s both; }
+    .preloader-bottom { bottom: 0; animation: panelDown 0.95s cubic-bezier(0.76, 0, 0.24, 1) 0.3s both; }
+    @keyframes panelUp   { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+    @keyframes panelDown { from { transform: translateY(0); } to { transform: translateY(100%);  } }
+
+    /* ── NAV ── */
+
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.75rem 2.5rem;
+      pointer-events: none;
+    }
+    .nav a { pointer-events: all; }
+
+    .nav-mark {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--fg);
+      text-decoration: none;
+      opacity: 0;
+      animation: revealEl 0.6s var(--ease-out) 1.5s forwards;
+      transition: opacity var(--t-fast);
+      text-shadow: 0 1px 12px rgba(0,0,0,0.6);
+    }
+    .nav-mark:hover { opacity: 1 !important; }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2.25rem;
+      opacity: 0;
+      animation: revealEl 0.6s var(--ease-out) 1.65s forwards;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--fg);
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity var(--t-fast);
+      text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    @keyframes revealEl { to { opacity: 0.8; } }
+
+    /* ── HERO ── */
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* ── LOCAL VIDEO — plays immediately as placeholder ── */
+
+    .hero-video-local {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── VIDEO BACKGROUND ──
+       YouTube iframe scaled to cover the full viewport.
+       pointer-events: none lets clicks through to page elements.
+    ── */
+    .hero-video-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .hero-video-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: all;
+    }
+
+    .hero-video-bg iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* Cover viewport maintaining 16:9 */
+      width: 100vw;
+      height: 56.25vw;       /* 9/16 × 100vw */
+      min-height: 100vh;
+      min-width: 177.78vh;   /* 16/9 × 100vh */
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      border: none;
+    }
+
+    /* Dark layer so text stays readable over varied footage */
+    .hero-video-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: rgba(8,8,8,0.42);
+      pointer-events: none;
+    }
+
+    /* Amber spark particles — subtle layer over video */
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Vignette edges */
+    .hero-vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background:
+        radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, rgba(8,8,8,0.78) 100%),
+        linear-gradient(to bottom, rgba(8,8,8,0.6) 0%, transparent 18%, transparent 72%, rgba(8,8,8,0.92) 100%);
+      pointer-events: none;
+    }
+
+    /* ── HERO CONTENT — name + role, centred at 44% ── */
+
+    .hero-content {
+      position: absolute;
+      top: 44%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4.5rem;
+      text-align: center;
+      user-select: none;
+      width: 100%;
+      padding: 0 2rem;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(5rem, 14vw, 10.5rem);
+      line-height: 1;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+      text-shadow: 0 2px 40px rgba(0,0,0,0.55);
+    }
+
+    .letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation:
+        letterIn  0.9s cubic-bezier(0.16,1,0.3,1) calc(var(--i) * 0.07s + 0.7s) forwards,
+        letterOut 0.7s cubic-bezier(0.16,1,0.3,1) calc(var(--i) * 0.07s + 0.7s + 3.1s) forwards;
+    }
+    @keyframes letterIn  { to { opacity: 1; transform: translateY(0); } }
+    @keyframes letterOut { to { opacity: 0; transform: translateY(-14px); } }
+
+    .hero-role {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      text-shadow: 0 1px 12px rgba(0,0,0,0.7);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.8s var(--ease-out) 1.65s forwards;
+    }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ── SCROLL CUE ── */
+
+    .hero-scroll-cue {
+      position: absolute;
+      bottom: 2.25rem;
+      left: 50%;
+      z-index: 5;
+      width: 1px;
+      height: 44px;
+      background: var(--fg-muted);
+      opacity: 0;
+      animation:
+        cueReveal   0.6s var(--ease-out) 2.6s forwards,
+        scrollPulse 2.4s ease-in-out 3.2s infinite;
+    }
+    @keyframes cueReveal   { to { opacity: 0.28; } }
+    @keyframes scrollPulse {
+      0%, 100% { transform: translateX(-50%) scaleY(1);    opacity: 0.28; }
+      50%       { transform: translateX(-50%) scaleY(0.35); opacity: 0.08; }
+    }
+
+    /* ── CURSOR ── */
+
+    .cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 10px; height: 10px;
+      border: 1px solid rgba(245,240,235,0.65);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition:
+        width  var(--t-fast) var(--ease-out),
+        height var(--t-fast) var(--ease-out),
+        margin var(--t-fast) var(--ease-out),
+        border-color var(--t-fast);
+      mix-blend-mode: difference;
+    }
+    .cursor.expanded {
+      width: 54px; height: 54px;
+      border-color: rgba(200,169,126,0.55);
+      margin: -22px 0 0 -22px;
+    }
+
+    /* ── RESPONSIVE ── */
+
+    @media (max-width: 600px) {
+      .nav { padding: 1.25rem 1.5rem; }
+      .nav-links { gap: 1.25rem; }
+      .nav-links a { font-size: 9px; }
+    }
+
+    /* ── TOUCH — hide cursor, restore body cursor ── */
+
+    @media (hover: none) {
+      .cursor { display: none; }
+      body { cursor: auto; }
+    }
+
+    /* ── REDUCED MOTION ── */
+
+    @media (prefers-reduced-motion: reduce) {
+      .preloader-top    { animation: none; transform: translateY(-100%); }
+      .preloader-bottom { animation: none; transform: translateY(100%);  }
+      .hero-video-bg    { animation: none; opacity: 1; }
+      .letter           { animation: none; opacity: 1; transform: none; }
+      .hero-role        { animation: none; opacity: 1; transform: none; }
+      .hero-scroll-cue  { animation: none; opacity: 0.28; }
+      .nav-mark, .nav-links { animation: none; opacity: 0.8; }
+      .modal, .modal-inner  { transition: none; }
+      .cursor { display: none; }
+      body { cursor: auto; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader-panel preloader-top"></div>
+    <div class="preloader-panel preloader-bottom"></div>
+  </div>
+
+  <div class="cursor" aria-hidden="true"></div>
+
+  <nav class="nav" aria-label="Main navigation">
+    <a href="#" class="nav-mark" aria-label="Ragesh — home">R · C</a>
+    <ul class="nav-links">
+      <li><a href="#animation">Animation</a></li>
+      <li><a href="#live-action">Live Action</a></li>
+      <li><a href="#photography">Photos</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero" aria-label="Introduction">
+
+    <!-- Local video — plays immediately, no buffering or control flash -->
+    <video class="hero-video-local" id="localVideo"
+      autoplay muted loop playsinline
+      aria-hidden="true">
+      <source src="Animate_field_alone_202605171302.mp4" type="video/mp4">
+    </video>
+
+    <!-- Showreel plays full-bleed, muted, looping as the hero visual -->
+    <div class="hero-video-bg" aria-hidden="true">
+      <iframe
+        id="bgVideo"
+        allow="autoplay; fullscreen"
+        title="Showreel background — muted"
+        aria-hidden="true"></iframe>
+      <!-- Blocks mouse events reaching the iframe so YouTube never shows its controls -->
+      <div class="hero-video-mask"></div>
+    </div>
+
+    <div class="hero-video-scrim" aria-hidden="true"></div>
+    <canvas class="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <!-- Name + role — optically above centre -->
+    <div class="hero-content">
+      <h1 class="hero-name" aria-label="Ragesh"><span
+        class="letter" style="--i:0">R</span><span
+        class="letter" style="--i:1">a</span><span
+        class="letter" style="--i:2">g</span><span
+        class="letter" style="--i:3">e</span><span
+        class="letter" style="--i:4">s</span><span
+        class="letter" style="--i:5">h</span></h1>
+      <p class="hero-role">Creative designer · Producer</p>
+    </div>
+
+    <div class="hero-scroll-cue" aria-hidden="true"></div>
+  </section>
+
+  <script>
+    /* ── PRELOADER: remove after panels clear ── */
+    setTimeout(() => {
+      const p = document.getElementById('preloader');
+      if (p) p.remove();
+    }, 1400);
+
+    /* ── YOUTUBE: inject src immediately so it buffers/plays invisibly for a full 5s
+         before we reveal it — controls flash (1-3s) is long gone by reveal time ── */
+    (function () {
+      const iframe = document.getElementById('bgVideo');
+      if (iframe) {
+        iframe.src = 'https://www.youtube.com/embed/t0D7lNj19C4?autoplay=1&mute=1&loop=1&playlist=t0D7lNj19C4&controls=0&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&modestbranding=1&enablejsapi=0';
+      }
+    })();
+
+    /* ── YOUTUBE REVEAL: fade in at 5s — YouTube has been playing silently for 5s, no controls ── */
+    setTimeout(() => {
+      const bg = document.querySelector('.hero-video-bg');
+      if (bg) bg.style.opacity = '1';
+    }, 5000);
+
+    /* ── LOCAL VIDEO: pause once YouTube fade is complete (5s reveal + 1.5s transition) ── */
+    setTimeout(() => {
+      const v = document.getElementById('localVideo');
+      if (v) v.pause();
+    }, 6600);
+
+    /* ── AMBER SPARK PARTICLES (subtle layer over the video) ── */
+    (function () {
+      const canvas = document.querySelector('.hero-canvas');
+      const ctx    = canvas.getContext('2d');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const COUNT = 55;
+      const DPR   = window.devicePixelRatio || 1;
+      let W, H;
+
+      function resize() {
+        W = canvas.offsetWidth;
+        H = canvas.offsetHeight;
+        canvas.width  = W * DPR;
+        canvas.height = H * DPR;
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+
+      function make(initial) {
+        const amber   = Math.random() < 0.65;
+        const size    = amber ? (Math.random() * 1.4 + 0.4) : (Math.random() * 0.6 + 0.15);
+        const maxLife = Math.floor(Math.random() * 260 + 160);
+        return {
+          x:       Math.random() * (W || window.innerWidth),
+          y:       initial ? Math.random() * (H || window.innerHeight) : (H || window.innerHeight) + 10,
+          size, amber,
+          vx:      (Math.random() - 0.5) * 0.18,
+          vy:      -(Math.random() * 0.28 + 0.08),
+          life:    initial ? Math.floor(Math.random() * maxLife * 0.5) : 0,
+          maxLife,
+          phase:   Math.random() * Math.PI * 2,
+        };
+      }
+
+      let ps = [];
+      function init() { ps = Array.from({ length: COUNT }, () => make(true)); }
+
+      window.addEventListener('resize', resize);
+      resize();
+      init();
+
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < ps.length; i++) {
+          const p  = ps[i];
+          p.life++;
+          const t  = p.life / p.maxLife;
+          let a    = t < 0.2 ? t / 0.2 : t > 0.75 ? 1 - (t - 0.75) / 0.25 : 1;
+          a        = Math.max(0, Math.min(1, a)) * 0.55; /* reduced — video provides main visual */
+
+          const waver = Math.sin(p.phase + p.life * 0.038) * 0.15;
+          const dx = p.vx + waver;
+          const dy = p.vy;
+          p.x += dx; p.y += dy;
+
+          if (p.amber && p.size > 1.0) {
+            const spd = Math.hypot(dx, dy);
+            if (spd > 0) {
+              const tl = p.size * 6;
+              const tx = p.x - (dx / spd) * tl;
+              const ty = p.y - (dy / spd) * tl;
+              const g  = ctx.createLinearGradient(p.x, p.y, tx, ty);
+              g.addColorStop(0, `rgba(200,169,126,${(a * 0.7).toFixed(3)})`);
+              g.addColorStop(1, 'rgba(200,169,126,0)');
+              ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(tx, ty);
+              ctx.strokeStyle = g; ctx.lineWidth = p.size * 0.45; ctx.lineCap = 'round'; ctx.stroke();
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.amber
+            ? `rgba(200,169,126,${a.toFixed(3)})`
+            : `rgba(245,240,235,${(a * 0.6).toFixed(3)})`;
+          ctx.fill();
+
+          if (p.life >= p.maxLife || p.y < -30 || p.x < -60 || p.x > W + 60) {
+            ps[i] = make(false);
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+
+    /* ── LETTER LOOP ── */
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      function restart() {
+        document.querySelectorAll('.letter').forEach(el => {
+          const c = el.cloneNode(true);
+          el.parentNode.replaceChild(c, el);
+        });
+      }
+      /* First restart after all letterOut animations complete:
+         latest = i5: 5×0.07 + 0.7 + 3.1 + 0.7 = 4.85s → safe at 5.1s */
+      setTimeout(function loop() { restart(); setTimeout(loop, 5000); }, 5100);
+    })();
+
+    /* ── SMOOTH LERP CURSOR ── */
+    (function () {
+      const el = document.querySelector('.cursor');
+      if (window.matchMedia('(hover: none)').matches ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        el.style.display = 'none';
+        document.body.style.cursor = 'auto';
+        return;
+      }
+
+      const LERP = 0.12;
+      let mx = -100, my = -100, cx = -100, cy = -100;
+
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+      (function loop() {
+        cx += (mx - cx) * LERP;
+        cy += (my - cy) * LERP;
+        el.style.left = cx + 'px';
+        el.style.top  = cy + 'px';
+        requestAnimationFrame(loop);
+      })();
+
+      document.querySelectorAll('a, button').forEach(t => {
+        t.addEventListener('mouseenter', () => el.classList.add('expanded'));
+        t.addEventListener('mouseleave', () => el.classList.remove('expanded'));
+      });
+    })();
+  </script>
+
+</body>
+</html>
